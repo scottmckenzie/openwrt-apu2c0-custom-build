@@ -1,19 +1,39 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  release: 'v19.07.3'
+  
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- script: apt-get -q -y install libncursesw5-dev
+  displayName: 'Install dependencies'
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    umask 0022
+    git clone https://git.openwrt.org/openwrt/openwrt.git
+    git checkout $(release)
+  displayName: 'Clone OpenWrt git repo'
+
+- script: |
+    cp .config openwrt/
+    cd openwrt/
+  displayName: 'Copy .config file'
+
+- script: |
+    ./scripts/feeds update -a
+    ./scripts/feeds install -a
+  displayName: Update package feeds
+
+- script: make
+  displayName: 'Build the project'
+
+- task: CopyFiles@2
+  inputs:
+    contents: 'bin/targets/x86/64/**'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
