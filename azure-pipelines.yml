@@ -1,44 +1,48 @@
-trigger:
-- master
+jobs:
+  job: Build
+  timeoutInMinutes: 0
 
-pool:
-  vmImage: 'ubuntu-latest'
+  trigger:
+  - master
 
-variables:
-  release: 'v19.07.3'
-  workingDirectory: '$(Build.SourcesDirectory)/openwrt'
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  variables:
+    release: 'v19.07.3'
+    workingDirectory: '$(Build.SourcesDirectory)/openwrt'
   
-steps:
-- script: sudo apt-get -q -y install libncurses5-dev
-  displayName: 'Install dependencies'
+  steps:
+  - script: sudo apt-get -q -y install libncurses5-dev
+    displayName: 'Install dependencies'
 
-- script: |
-    umask 0022
-    git clone https://git.openwrt.org/openwrt/openwrt.git
-  displayName: 'Clone OpenWrt git repo'
+  - script: |
+      umask 0022
+      git clone https://git.openwrt.org/openwrt/openwrt.git
+    displayName: 'Clone OpenWrt git repo'
 
-- script: |
-    cp .config openwrt/
-  displayName: 'Copy .config file'
+  - script: |
+      cp .config openwrt/
+    displayName: 'Copy .config file'
 
-- script: git checkout $(release)
-  workingDirectory: $(workingDirectory)
-  displayName: 'Checkout $(release)'
+  - script: git checkout $(release)
+    workingDirectory: $(workingDirectory)
+    displayName: 'Checkout $(release)'
 
-- script: |
-    ./scripts/feeds update -a
-    ./scripts/feeds install -a
-  workingDirectory: $(workingDirectory)
-  displayName: 'Update package feeds'
+  - script: |
+      ./scripts/feeds update -a
+      ./scripts/feeds install -a
+    workingDirectory: $(workingDirectory)
+    displayName: 'Update package feeds'
 
-- script: make
-  workingDirectory: $(workingDirectory)
-  displayName: 'Build the project'
+  - script: make
+    workingDirectory: $(workingDirectory)
+    displayName: 'Build the project'
 
-- task: CopyFiles@2
-  inputs:
-    contents: $(workingDirectory)/bin/targets/x86/64/**
-    targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: CopyFiles@2
+    inputs:
+      contents: $(workingDirectory)/bin/targets/x86/64/**
+      targetFolder: $(Build.ArtifactStagingDirectory)
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
