@@ -8,7 +8,7 @@ variables:
   release: 'v19.07.3'
   
 steps:
-- script: apt-get -q -y install libncursesw5-dev
+- script: sudo apt-get -q -y install libncursesw5-dev
   displayName: 'Install dependencies'
 
 - script: |
