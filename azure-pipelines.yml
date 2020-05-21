@@ -41,7 +41,8 @@ jobs:
 
   - task: CopyFiles@2
     inputs:
-      contents: $(workingDirectory)/bin/targets/x86/64/**
+      sourceFolder: $(workingDirectory)/bin/targets/x86/64
+      contents: '*'
       targetFolder: $(Build.ArtifactStagingDirectory)
 
   - task: PublishBuildArtifacts@1
