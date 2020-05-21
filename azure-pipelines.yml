@@ -1,18 +1,18 @@
 jobs:
-  job: Build
-  timeoutInMinutes: 0
+- job: Build
+  timeoutInMinutes: 180
 
-  trigger:
+- trigger:
   - master
 
-  pool:
-    vmImage: 'ubuntu-latest'
+- pool:
+  vmImage: 'ubuntu-latest'
 
-  variables:
-    release: 'v19.07.3'
-    workingDirectory: '$(Build.SourcesDirectory)/openwrt'
-  
-  steps:
+- variables:
+  release: 'v19.07.3'
+  workingDirectory: '$(Build.SourcesDirectory)/openwrt'
+
+- steps:
   - script: sudo apt-get -q -y install libncurses5-dev
     displayName: 'Install dependencies'
 
