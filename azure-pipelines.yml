@@ -35,7 +35,9 @@ jobs:
     workingDirectory: $(workingDirectory)
     displayName: 'Update package feeds'
 
-  - script: make
+  - script: |
+      make defconfig
+      make
     workingDirectory: $(workingDirectory)
     displayName: 'Build the project'
 
