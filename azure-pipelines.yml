@@ -32,13 +32,18 @@ jobs:
     displayName: 'Update package feeds'
 
   - script: |
+      cp .config $(workingDirectory)
+    displayName: 'Copy .config file'
+
+  - script: |
       make defconfig
     workingDirectory: $(workingDirectory)
     displayName: 'Make defconfig'
 
   - script: |
-      cp .config $(workingDirectory)
-    displayName: 'Copy .config file'
+      make oldconfig
+    workingDirectory: $(workingDirectory)
+    displayName: 'Make oldconfig'
 
   - script: |
       make
