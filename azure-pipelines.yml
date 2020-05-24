@@ -30,7 +30,7 @@ jobs:
     workingDirectory: $(workingDirectory)
     displayName: 'Get version'
 
-- script: |
+  - script: |
       ./scripts/feeds update -a
       ./scripts/feeds install -a
     workingDirectory: $(workingDirectory)
