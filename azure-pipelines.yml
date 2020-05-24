@@ -26,9 +26,14 @@ jobs:
     displayName: 'Checkout $(release)'
 
   - script: |
-      echo "##vso[task.setvariable variable=version;isOutput=true]$(cat version)"
+      echo "##vso[task.setvariable variable=version]$(cat version)"
     workingDirectory: $(workingDirectory)
     displayName: 'Get version'
+
+  - script: |
+      echo Version is $version
+    workingDirectory: $(workingDirectory)
+    displayName: 'Display version'
 
   - script: |
       ./scripts/feeds update -a
