@@ -26,7 +26,7 @@ jobs:
     displayName: 'Checkout $(release)'
 
   - script: |
-      echo "##vso[task.setvariable variable=version]$(cat version)"
+      echo "##vso[task.setvariable variable=version]`cat version`"
     workingDirectory: $(workingDirectory)
     displayName: 'Get version'
 
