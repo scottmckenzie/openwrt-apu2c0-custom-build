@@ -3,7 +3,7 @@ trigger:
 
 jobs:
 - job: Build
-  timeoutInMinutes: 180
+  timeoutInMinutes: 0
 
   pool:
     vmImage: 'ubuntu-latest'
@@ -26,6 +26,11 @@ jobs:
     displayName: 'Checkout $(release)'
 
   - script: |
+      echo "##vso[task.setvariable variable=version;isOutput=true]$(cat version)"
+    workingDirectory: $(workingDirectory)
+    displayName: 'Get version'
+
+- script: |
       ./scripts/feeds update -a
       ./scripts/feeds install -a
     workingDirectory: $(workingDirectory)
@@ -58,3 +63,13 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'
+
+  - task: GithubRelease@0
+    displayName: 'Create GitHub Release'
+    inputs:
+      gitHubConnection: github.com_scottmckenzie
+      repositoryName: scottmckenzie/openwrt-apu2c0-custom-build
+      tagSource: manual
+      tag: '$(release)_$(version)'
+      assets: |
+        $(Build.ArtifactStagingDirectory)/*
