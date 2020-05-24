@@ -9,7 +9,7 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   variables:
-    release: 'v19.07.3'
+    openwrtRelease: 'v19.07.3'
     workingDirectory: '$(Build.SourcesDirectory)/openwrt'
 
   steps:
@@ -21,19 +21,21 @@ jobs:
       git clone https://github.com/openwrt/openwrt.git
     displayName: 'Clone OpenWrt git repo'
 
-  - script: git checkout $(release)
+  - script: git checkout $(openwrtRelease)
     workingDirectory: $(workingDirectory)
-    displayName: 'Checkout $(release)'
+    displayName: 'Checkout $(openwrtRelease)'
 
   - script: |
-      echo "##vso[task.setvariable variable=version]`cat version`"
+      VERSION=`cat version`
+      echo VERSION is $VERSION
+      echo "##vso[task.setvariable variable=openwrtVersion]$VERSION"
     workingDirectory: $(workingDirectory)
     displayName: 'Get version'
 
   - script: |
-      echo Version is $version
+      echo Version is $OPENWRTVERSION
     workingDirectory: $(workingDirectory)
-    displayName: 'Display version'
+    displayName: 'Display version: $(openwrtVersion)'
 
   - script: |
       ./scripts/feeds update -a
@@ -75,6 +77,6 @@ jobs:
       gitHubConnection: github.com_scottmckenzie
       repositoryName: scottmckenzie/openwrt-apu2c0-custom-build
       tagSource: manual
-      tag: '$(release)_$(version)'
+      tag: '$(openwrtRelease)_$(openwrtVersion)'
       assets: |
         $(Build.ArtifactStagingDirectory)/*
