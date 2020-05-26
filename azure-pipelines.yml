@@ -27,15 +27,10 @@ jobs:
 
   - script: |
       VERSION=`cat version`
-      echo VERSION is $VERSION
+      echo OpenWrt version is $VERSION
       echo "##vso[task.setvariable variable=openwrtVersion]$VERSION"
     workingDirectory: $(workingDirectory)
     displayName: 'Get version'
-
-  - script: |
-      echo Version is $(openwrtVersion)
-    workingDirectory: $(workingDirectory)
-    displayName: 'Display version'
 
   - script: |
       ./scripts/feeds update -a
@@ -51,11 +46,6 @@ jobs:
       make defconfig
     workingDirectory: $(workingDirectory)
     displayName: 'Make defconfig'
-
-  - script: |
-      make oldconfig
-    workingDirectory: $(workingDirectory)
-    displayName: 'Make oldconfig'
 
   - script: |
       make
