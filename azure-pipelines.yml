@@ -67,6 +67,6 @@ jobs:
       gitHubConnection: github.com_scottmckenzie
       repositoryName: scottmckenzie/openwrt-apu2c0-custom-build
       tagSource: manual
-      tag: '$(openwrtRelease)_$(openwrtVersion)'
+      tag: '$(openwrtRelease)_$(Build.BuildNumber)'
       assets: |
         $(Build.ArtifactStagingDirectory)/*
