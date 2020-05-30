@@ -32,13 +32,18 @@ jobs:
     workingDirectory: $(workingDirectory)
     displayName: 'Get version'
 
-  - script: |
-      ./scripts/feeds update -a
-      ./scripts/feeds install -a
-    workingDirectory: $(workingDirectory)
-    displayName: 'Update package feeds'
+    - script: |
+    ./scripts/feeds update -a
+    ./scripts/feeds install -a
+  workingDirectory: $(workingDirectory)
+  displayName: 'Update package feeds'
 
   - script: |
+      git cherry-pick --strategy=recursive -X theirs 9f43594e3a28deeea18cfa40acd0b1388e64f600
+    workingDirectory: $(workingDirectory)/feeds/packages
+    displayName: 'Update LXC package to version 4.0.2'
+
+- script: |
       cp .config $(workingDirectory)
     displayName: 'Copy .config file'
 
