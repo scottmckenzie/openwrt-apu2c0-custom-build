@@ -9,7 +9,7 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   variables:
-    openwrtRelease: 'v21.02'
+    openwrtRelease: 'v21.02.0'
     workingDirectory: '$(Build.SourcesDirectory)/openwrt'
 
   steps:
