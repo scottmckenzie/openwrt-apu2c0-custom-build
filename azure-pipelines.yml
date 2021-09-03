@@ -48,7 +48,7 @@ jobs:
     displayName: 'Make defconfig'
 
   - script: |
-      make
+      make -j1 V=s
     workingDirectory: $(workingDirectory)
     displayName: 'Build the project'
 
