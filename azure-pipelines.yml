@@ -48,7 +48,12 @@ jobs:
     displayName: 'Make defconfig'
 
   - script: |
-      make -j1 V=s
+      NPROC=`nproc`
+      echo Number of CPUs is $NPROC
+    displayName: 'Print number of CPUs'
+
+  - script: |
+      make -j`nproc` V=s
     workingDirectory: $(workingDirectory)
     displayName: 'Build the project'
 
