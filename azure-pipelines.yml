@@ -53,7 +53,7 @@ jobs:
     displayName: 'Print number of CPUs'
 
   - script: |
-      make -j`nproc` V=s
+      make V=s
     workingDirectory: $(workingDirectory)
     displayName: 'Build the project'
 
