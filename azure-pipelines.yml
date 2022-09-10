@@ -6,7 +6,7 @@ jobs:
   timeoutInMinutes: 0
 
   pool:
-    vmImage: 'ubuntu-latest'
+    name: Default
 
   variables:
     openwrtRelease: 'openwrt-22.03'
