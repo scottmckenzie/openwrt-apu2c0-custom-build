@@ -13,7 +13,7 @@ jobs:
     workingDirectory: '$(Build.SourcesDirectory)/openwrt'
 
   steps:
-  - script: sudo apt-get -q -y install libncurses5-dev
+  - script: sudo apt-get -q -y install libncurses-dev
     displayName: 'Install dependencies'
 
   - script: |
