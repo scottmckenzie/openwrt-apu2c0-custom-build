@@ -53,9 +53,14 @@ jobs:
     displayName: 'Print number of CPUs'
 
   - script: |
-      make download
+      make -j $(($(nproc)+1)) download
     workingDirectory: $(workingDirectory)
     displayName: 'Download sources'
+
+  - script: |
+      make -j $(($(nproc)+1)) prepare
+    workingDirectory: $(workingDirectory)
+    displayName: 'make target/compile'
 
   - script: |
       make -j $(($(nproc)+1)) target/compile
