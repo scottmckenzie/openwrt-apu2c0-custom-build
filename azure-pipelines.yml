@@ -53,9 +53,44 @@ jobs:
     displayName: 'Print number of CPUs'
 
   - script: |
-      make -j1 V=sc
+      make download
     workingDirectory: $(workingDirectory)
-    displayName: 'Build the project'
+    displayName: 'Download sources'
+
+  - script: |
+      make -j $(($(nproc)+1)) target/compile
+    workingDirectory: $(workingDirectory)
+    displayName: 'make target/compile'
+
+  - script: |
+      make -j $(($(nproc)+1)) package/cleanup
+    workingDirectory: $(workingDirectory)
+    displayName: 'make package/cleanup'
+
+  - script: |
+      make -j $(($(nproc)+1)) package/compile
+    workingDirectory: $(workingDirectory)
+    displayName: 'make package/compile'
+
+  - script: |
+      make -j $(($(nproc)+1)) package/install
+    workingDirectory: $(workingDirectory)
+    displayName: 'make package/install'
+
+  - script: |
+      make -j $(($(nproc)+1)) package/preconfig
+    workingDirectory: $(workingDirectory)
+    displayName: 'make package/preconfig'
+
+  - script: |
+      make -j $(($(nproc)+1)) target/install
+    workingDirectory: $(workingDirectory)
+    displayName: 'make target/install'
+
+  - script: |
+      make -j $(($(nproc)+1)) package/index
+    workingDirectory: $(workingDirectory)
+    displayName: 'make package/index'
 
   - task: CopyFiles@2
     inputs:
