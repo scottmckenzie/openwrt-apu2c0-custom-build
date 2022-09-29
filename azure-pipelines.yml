@@ -60,20 +60,10 @@ jobs:
   - script: |
       make -j $(($(nproc)+1)) prepare
     workingDirectory: $(workingDirectory)
-    displayName: 'make target/compile'
+    displayName: 'make prepare'
 
   - script: |
-      make -j $(($(nproc)+1)) target/compile
-    workingDirectory: $(workingDirectory)
-    displayName: 'make target/compile'
-
-  - script: |
-      make -j $(($(nproc)+1)) package/cleanup
-    workingDirectory: $(workingDirectory)
-    displayName: 'make package/cleanup'
-
-  - script: |
-      make -j $(($(nproc)+1)) package/compile
+      make -j $(($(nproc)+1)) V=sc package/compile
     workingDirectory: $(workingDirectory)
     displayName: 'make package/compile'
 
