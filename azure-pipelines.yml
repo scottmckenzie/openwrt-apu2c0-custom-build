@@ -39,7 +39,7 @@ jobs:
     displayName: 'Update package feeds'
 
   - script: |
-      cp .config $(workingDirectory)
+      cat .config >> $(workingDirectory)/.config
     displayName: 'Copy .config file'
 
   - script: |
@@ -63,7 +63,7 @@ jobs:
     displayName: 'make prepare'
 
   - script: |
-      make -j $(($(nproc)+1)) V=sc package/compile
+      make V=sc package/compile
     workingDirectory: $(workingDirectory)
     displayName: 'make package/compile'
 
