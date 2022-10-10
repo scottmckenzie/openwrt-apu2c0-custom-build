@@ -9,7 +9,8 @@ jobs:
     vmImage: ubuntu-latest
 
   variables:
-    openwrtRelease: 'v22.03.0'
+    gcc: 'gcc-11.2.0'
+    openwrtRelease: '22.03.1'
     workingDirectory: '$(Build.SourcesDirectory)/openwrt'
 
   steps:
@@ -21,9 +22,17 @@ jobs:
       git clone https://github.com/openwrt/openwrt.git
     displayName: 'Clone OpenWrt git repo'
 
-  - script: git checkout $(openwrtRelease)
+  - script: git checkout v$(openwrtRelease)
     workingDirectory: $(workingDirectory)
-    displayName: 'Checkout $(openwrtRelease)'
+    displayName: 'Checkout v$(openwrtRelease)'
+
+  - script: wget https://downloads.openwrt.org/releases/$(openwrtRelease)/targets/x86/64/openwrt-toolchain-$(openwrtRelease)-x86-64_$(gcc)_musl.Linux-x86_64.tar.xz
+    workingDirectory: $(workingDirectory)
+    displayName: 'Download toolchain'
+
+  - script: tar -xf openwrt-toolchain-$(openwrtRelease)-x86-64_$(gcc)_musl.Linux-x86_64.tar.xz
+    workingDirectory: $(workingDirectory)
+    displayName: 'Extract toolchain'
 
   - script: |
       VERSION=`cat version`
@@ -38,54 +47,30 @@ jobs:
     workingDirectory: $(workingDirectory)
     displayName: 'Update package feeds'
 
-  - script: |
-      cat .config >> $(workingDirectory)/.config
+  - script: cat diffconfig >> $(workingDirectory)/.config
     displayName: 'Copy .config file'
 
-  - script: |
-      make defconfig
+  - script: make defconfig
     workingDirectory: $(workingDirectory)
     displayName: 'Make defconfig'
+
+  - script: |
+      sed -i 's!CONFIG_TOOLCHAIN_ROOT="/opt/cross/x86_64-unknown-linux-gnu"!CONFIG_TOOLCHAIN_ROOT="$(workingDirectory)/openwrt-toolchain-$(openwrtRelease)-x86-64_$(gcc)_musl.Linux-x86_64/toolchain-x86_64_$(gcc)_musl"!' .config
+    workingDirectory: $(workingDirectory)
+    displayName: 'Update toolchain''
 
   - script: |
       NPROC=`nproc`
       echo Number of CPUs is $NPROC
     displayName: 'Print number of CPUs'
 
-  - script: |
-      make -j $(($(nproc)+1)) download
+  - script: make -j $(($(nproc)+1)) download
     workingDirectory: $(workingDirectory)
     displayName: 'Download sources'
 
-  - script: |
-      make -j $(($(nproc)+1)) prepare
+  - script: make -j $(($(nproc)+1)) world
     workingDirectory: $(workingDirectory)
-    displayName: 'make prepare'
-
-  - script: |
-      make V=sc package/compile
-    workingDirectory: $(workingDirectory)
-    displayName: 'make package/compile'
-
-  - script: |
-      make -j $(($(nproc)+1)) package/install
-    workingDirectory: $(workingDirectory)
-    displayName: 'make package/install'
-
-  - script: |
-      make -j $(($(nproc)+1)) package/preconfig
-    workingDirectory: $(workingDirectory)
-    displayName: 'make package/preconfig'
-
-  - script: |
-      make -j $(($(nproc)+1)) target/install
-    workingDirectory: $(workingDirectory)
-    displayName: 'make target/install'
-
-  - script: |
-      make -j $(($(nproc)+1)) package/index
-    workingDirectory: $(workingDirectory)
-    displayName: 'make package/index'
+    displayName: 'make world'
 
   - task: CopyFiles@2
     inputs:
@@ -102,6 +87,6 @@ jobs:
       gitHubConnection: github.com_scottmckenzie
       repositoryName: scottmckenzie/openwrt-apu2c0-custom-build
       tagSource: manual
-      tag: '$(openwrtRelease)_$(Build.BuildNumber)'
+      tag: 'v$(openwrtRelease)_$(Build.BuildNumber)'
       assets: |
         $(Build.ArtifactStagingDirectory)/*
